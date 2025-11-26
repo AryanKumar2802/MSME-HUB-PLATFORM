@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MSME Hub - Deployment Guide
 
 ## 📋 Pre-Deployment Checklist
@@ -244,3 +245,7 @@ For issues or questions:
 **Remember**: Free tiers are perfect for development and testing. For production with high traffic, consider upgrading to paid plans.
 
 Good luck with your MSME Hub! 🚀
+=======
+# MSME-HUB-PLATFORM
+MSME Hub is a full-stack MERN platform designed to support small businesses with financial tracking, GST guides, mentor &amp; lawyer consultation, and real-time chat. Features include business profiles, book records, expert discovery, secure authentication, Cloudinary uploads, and responsive UI.
+>>>>>>> 76e95841261755fd91601260336327623206fc40
