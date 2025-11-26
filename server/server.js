@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
+
+// Routes
 import authRoutes from './routes/auth.js';
 import businessRoutes from './routes/business.js';
 import bookRecordRoutes from './routes/bookRecords.js';
@@ -16,22 +18,20 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? process.env.CLIENT_URL 
-      : 'http://localhost:5173',
-    credentials: true
-  }
-});
 
-// Middleware
-app.use(cors());
+// CORS FIX — IMPORTANT FOR DEPLOYMENT
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true
+  })
+);
+
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// API ROUTES
 app.use('/api/auth', authRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/book-records', bookRecordRoutes);
@@ -39,12 +39,25 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/guides', guideRoutes);
 app.use('/api/lawyer', lawyerRoutes);
 
-// Health check
+// HEALTH CHECK (Render requires this)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
-// Socket.IO for real-time chat
+// ROOT ROUTE — FIXES "Cannot GET /"
+app.get('/', (req, res) => {
+  res.send('MSME Hub Backend is Running ✔️');
+});
+
+// SOCKET.IO
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true
+  }
+});
+
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -61,6 +74,7 @@ io.on('connection', (socket) => {
   });
 });
 
+// SERVER LISTEN
 const PORT = process.env.PORT || 5050;
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
